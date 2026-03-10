@@ -162,6 +162,14 @@
 
 ```
 ├── README.md              # 本文件
+├── docs/                  # 详细配置指南 ⭐
+│   ├── 01-cluster-setup.md    # 集群搭建
+│   ├── 02-workloads.md        # 工作负载配置
+│   ├── 03-networking.md       # 网络配置
+│   ├── 04-storage.md          # 存储配置
+│   ├── 05-security.md         # 安全配置
+│   ├── 06-monitoring.md       # 监控告警
+│   └── 07-troubleshooting.md  # 故障排查
 ├── manifests/             # 示例YAML文件
 │   ├── basic/            # 基础资源示例
 │   ├── advanced/         # 高级配置示例
@@ -170,6 +178,18 @@
 ├── notes/                # 学习笔记
 └── labs/                 # 实验练习
 ```
+
+## 📖 详细配置指南
+
+| 文档 | 内容 |
+|------|------|
+| [01-集群搭建](docs/01-cluster-setup.md) | minikube/kind/k3s 本地环境、kubeadm 生产集群、云托管集群 |
+| [02-工作负载](docs/02-workloads.md) | Pod 完整配置、Deployment 滚动更新、StatefulSet、DaemonSet、Job/CronJob |
+| [03-网络配置](docs/03-networking.md) | Service 四种类型、Ingress 详解、NetworkPolicy、DNS 配置 |
+| [04-存储配置](docs/04-storage.md) | Volume 类型、PV/PVC、StorageClass 动态供给、卷扩容和快照 |
+| [05-安全配置](docs/05-security.md) | RBAC 完整示例、Pod 安全标准、Secret 管理、最佳实践清单 |
+| [06-监控告警](docs/06-monitoring.md) | Metrics Server、Prometheus Stack、日志收集、告警配置 |
+| [07-故障排查](docs/07-troubleshooting.md) | Pod/网络/存储问题排查、调试命令、常见问题速查表 |
 
 ---
 
