@@ -11,7 +11,8 @@
 ```
 ├── README.md                                    # 本文件
 ├── docs/                                        # 运维文档
-│   └── Linux_K8s_运维命令速查手册.md              # Linux + K8s 100+ 条常用命令
+│   ├── Linux_K8s_运维命令速查手册.md              # Linux + K8s 100+ 条常用命令
+│   └── K8s_GPU调度与部署指南.md                   # GPU Operator / 调度 / MIG / DRA
 ├── manifests/                                   # 示例 YAML
 │   ├── basic/                                   # 基础资源
 │   │   ├── deployment.yaml                      # Deployment 示例
@@ -30,7 +31,8 @@
 
 | 文档 | 内容 |
 |------|------|
-| [Linux & K8s 运维命令速查手册](docs/Linux_K8s_运维命令速查手册.md) | 系统信息、文件管理、进程管理、网络诊断、磁盘存储、用户权限、systemd 服务、日志排查、集群管理、Pod 操作、Deployment、Service/网络、故障排查、资源管理、配置管理 + 双份速查表 |
+| [Linux & K8s 运维命令速查手册](docs/Linux_K8s_运维命令速查手册.md) | 系统信息、文件管理、进程管理、网络诊断、磁盘存储、用户权限、systemd、日志排查、集群管理、Pod 操作、Deployment、Service、故障排查、资源管理、配置管理 + 速查表 |
+| [K8s GPU 调度与部署指南](docs/K8s_GPU调度与部署指南.md) | GPU 调度原理、GPU Operator 部署、资源请求规则、Time-Slicing 共享、MIG 分区、DRA 动态分配、DCGM 监控、故障排查、生产最佳实践 |
 
 ---
 
@@ -132,18 +134,10 @@ ArgoCD (https://argo-cd.readthedocs.io/) · Flux (https://fluxcd.io/)
 ### 高级（持续）
 
 1. Operator 开发、CRD 和 Controller
-2. 集群运维和故障排查
-3. 多集群管理
-4. 云原生架构设计
-
----
-
-## 🔗 社区
-
-- [Kubernetes Slack](https://slack.k8s.io/)
-- [CNCF Slack](https://slack.cncf.io/)
-- [r/kubernetes](https://www.reddit.com/r/kubernetes/)
-- [Kubernetes 中文社区](https://www.kubernetes.org.cn/)
+2. GPU 资源调度与管理
+3. 集群运维和故障排查
+4. 多集群管理
+5. 云原生架构设计
 
 ---
 
