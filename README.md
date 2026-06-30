@@ -10,20 +10,24 @@
 
 | 文档 | 内容 |
 |------|------|
-| [K8s 1.34 集群部署指南](docs/K8s_1.34_集群部署指南.md) | **kubeadm + containerd 从零部署** · Swap/内核/containerd/kubeadm/Calico/Helm · GPU 就绪 |
-| [K8s GPU 调度与部署指南](docs/K8s_GPU调度与部署指南.md) | GPU Operator 部署 · 调度规则 · Time-Slicing · MIG · DRA · DCGM 监控 |
+| [K8s 1.34 生产环境 HA 集群部署指南](docs/K8s_1.34_生产环境HA集群部署指南.md) | **3Master + 3etcd + 2LB** · 外部 etcd TLS · HAProxy+Keepalived · 11 节点完整部署 |
+| [K8s 1.34 集群部署指南（测试环境）](docs/K8s_1.34_集群部署指南.md) | 单 Master · kubeadm + containerd + Calico + Helm · GPU 就绪 |
+| [Prometheus + Grafana 监控部署指南](docs/Prometheus_Grafana_监控部署指南.md) | kube-prometheus-stack · 外部 etcd/HAProxy 监控 · GPU DCGM · 告警规则 · 9 层全栈覆盖 |
+| [K8s GPU 调度与部署指南](docs/K8s_GPU调度与部署指南.md) | GPU Operator · 调度规则 · Time-Slicing · MIG · DRA · DCGM 监控 |
 | [Linux & K8s 运维命令速查手册](docs/Linux_K8s_运维命令速查手册.md) | Linux 系统管理 + K8s 集群运维 100+ 命令 · 双份速查表 |
 
 ## 仓库结构
 
 ```
-├── docs/                              # 运维文档
-│   ├── K8s_1.34_集群部署指南.md         # 集群部署（NEW）
-│   ├── K8s_GPU调度与部署指南.md         # GPU 调度
-│   └── Linux_K8s_运维命令速查手册.md     # 命令速查
-├── manifests/basic/                    # Deployment / Service / ConfigMap
-├── manifests/advanced/                 # HPA / Ingress
-└── scripts/                            # 实用脚本
+├── docs/
+│   ├── K8s_1.34_生产环境HA集群部署指南.md    # 生产 HA 集群（11 节点）
+│   ├── K8s_1.34_集群部署指南.md              # 测试集群（单 Master）
+│   ├── Prometheus_Grafana_监控部署指南.md     # 全栈监控
+│   ├── K8s_GPU调度与部署指南.md              # GPU 调度
+│   └── Linux_K8s_运维命令速查手册.md          # 命令速查
+├── manifests/basic/                          # Deployment / Service / ConfigMap
+├── manifests/advanced/                       # HPA / Ingress
+└── scripts/useful-commands.sh                # 运维脚本
 ```
 
 ## 学习资源
