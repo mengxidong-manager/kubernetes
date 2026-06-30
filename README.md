@@ -10,16 +10,20 @@
 
 | 文档 | 内容 |
 |------|------|
-| [Linux & K8s 运维命令速查手册](docs/Linux_K8s_运维命令速查手册.md) | Linux 系统管理 + K8s 集群运维 100+ 命令 |
-| [K8s GPU 调度与部署指南](docs/K8s_GPU调度与部署指南.md) | GPU Operator / 调度规则 / MIG / Time-Slicing / DRA / DCGM 监控 |
+| [K8s 1.34 集群部署指南](docs/K8s_1.34_集群部署指南.md) | **kubeadm + containerd 从零部署** · Swap/内核/containerd/kubeadm/Calico/Helm · GPU 就绪 |
+| [K8s GPU 调度与部署指南](docs/K8s_GPU调度与部署指南.md) | GPU Operator 部署 · 调度规则 · Time-Slicing · MIG · DRA · DCGM 监控 |
+| [Linux & K8s 运维命令速查手册](docs/Linux_K8s_运维命令速查手册.md) | Linux 系统管理 + K8s 集群运维 100+ 命令 · 双份速查表 |
 
 ## 仓库结构
 
 ```
-├── docs/                    # 运维文档
-├── manifests/basic/         # Deployment / Service / ConfigMap
-├── manifests/advanced/      # HPA / Ingress
-└── scripts/                 # 实用脚本
+├── docs/                              # 运维文档
+│   ├── K8s_1.34_集群部署指南.md         # 集群部署（NEW）
+│   ├── K8s_GPU调度与部署指南.md         # GPU 调度
+│   └── Linux_K8s_运维命令速查手册.md     # 命令速查
+├── manifests/basic/                    # Deployment / Service / ConfigMap
+├── manifests/advanced/                 # HPA / Ingress
+└── scripts/                            # 实用脚本
 ```
 
 ## 学习资源
