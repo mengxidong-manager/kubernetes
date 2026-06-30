@@ -1,196 +1,158 @@
-# Kubernetes 学习资料汇总
+# Kubernetes 学习与运维资料
 
-> 最后更新: 2026-03-10
+> Kubernetes 学习资源、运维文档、示例 YAML、实用脚本
+>
+> 维护人：孟希东（测试） · 最后更新: 2026-06-30
 
-## 📚 官方资源
+---
 
-### 文档
-- [Kubernetes 官方文档](https://kubernetes.io/docs/) - 最权威的参考
-- [Kubernetes 中文文档](https://kubernetes.io/zh-cn/docs/) - 官方中文版
+## 📁 仓库结构
+
+```
+├── README.md                                    # 本文件
+├── docs/                                        # 运维文档
+│   └── Linux_K8s_运维命令速查手册.md              # Linux + K8s 100+ 条常用命令
+├── manifests/                                   # 示例 YAML
+│   ├── basic/                                   # 基础资源
+│   │   ├── deployment.yaml                      # Deployment 示例
+│   │   ├── service.yaml                         # Service 示例
+│   │   └── configmap-secret.yaml                # ConfigMap & Secret 示例
+│   └── advanced/                                # 高级配置
+│       ├── hpa.yaml                             # HPA 自动扩缩示例
+│       └── ingress.yaml                         # Ingress 示例
+└── scripts/                                     # 实用脚本
+    └── useful-commands.sh                       # 常用运维命令脚本
+```
+
+---
+
+## 📖 运维文档
+
+| 文档 | 内容 |
+|------|------|
+| [Linux & K8s 运维命令速查手册](docs/Linux_K8s_运维命令速查手册.md) | 系统信息、文件管理、进程管理、网络诊断、磁盘存储、用户权限、systemd 服务、日志排查、集群管理、Pod 操作、Deployment、Service/网络、故障排查、资源管理、配置管理 + 双份速查表 |
+
+---
+
+## 📚 学习资源
+
+### 官方文档
+
+- [Kubernetes 官方文档](https://kubernetes.io/docs/)
+- [Kubernetes 中文文档](https://kubernetes.io/zh-cn/docs/)
 - [Kubernetes API Reference](https://kubernetes.io/docs/reference/kubernetes-api/)
 - [kubectl 命令参考](https://kubernetes.io/docs/reference/kubectl/)
 
-### 官方教程
-- [Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/) - 交互式入门教程
-- [Hello Minikube](https://kubernetes.io/docs/tutorials/hello-minikube/) - 5分钟快速开始
-- [Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
+### 认证
 
-## 🎓 认证
+| 认证 | 说明 | 链接 |
+|------|------|------|
+| **CKA** | Kubernetes 管理员 · 2 小时实操 | [官方页面](https://www.cncf.io/certification/cka/) |
+| **CKAD** | 应用开发者视角 | [官方页面](https://www.cncf.io/certification/ckad/) |
+| **CKS** | 安全专项 | [官方页面](https://www.cncf.io/certification/cks/) |
 
-### CKA (Certified Kubernetes Administrator)
-- [CKA 官方页面](https://www.cncf.io/certification/cka/)
-- [CKA 考试大纲](https://github.com/cncf/curriculum)
-- 考试时长: 2小时，实操题
+### 本地集群工具
 
-### CKAD (Certified Kubernetes Application Developer)
-- [CKAD 官方页面](https://www.cncf.io/certification/ckad/)
-- 侧重应用开发者视角
-
-### CKS (Certified Kubernetes Security Specialist)
-- [CKS 官方页面](https://www.cncf.io/certification/cks/)
-- 安全专项认证
-
-## 🛠️ 实践工具
-
-### 本地集群
 | 工具 | 说明 | 链接 |
 |------|------|------|
-| **minikube** | 单节点本地集群 | https://minikube.sigs.k8s.io/ |
-| **kind** | Docker容器中的K8s | https://kind.sigs.k8s.io/ |
-| **k3d** | k3s的Docker封装 | https://k3d.io/ |
-| **k3s** | 轻量级K8s发行版 | https://k3s.io/ |
+| minikube | 单节点本地集群 | https://minikube.sigs.k8s.io/ |
+| kind | Docker 容器中的 K8s | https://kind.sigs.k8s.io/ |
+| k3d | k3s 的 Docker 封装 | https://k3d.io/ |
+| k3s | 轻量级 K8s 发行版 | https://k3s.io/ |
 
-### 常用CLI工具
+### 常用 CLI 工具
+
 | 工具 | 说明 | 链接 |
 |------|------|------|
-| **kubectx/kubens** | 快速切换context/namespace | https://github.com/ahmetb/kubectx |
-| **k9s** | 终端UI管理工具 | https://k9scli.io/ |
-| **stern** | 多Pod日志聚合 | https://github.com/stern/stern |
-| **lens** | K8s桌面IDE | https://k8slens.dev/ |
-| **kubectl-neat** | 清理YAML输出 | https://github.com/itaysk/kubectl-neat |
+| kubectx/kubens | 快速切换 context/namespace | https://github.com/ahmetb/kubectx |
+| k9s | 终端 UI 管理工具 | https://k9scli.io/ |
+| stern | 多 Pod 日志聚合 | https://github.com/stern/stern |
+| lens | K8s 桌面 IDE | https://k8slens.dev/ |
+| Helm | 包管理工具 | https://helm.sh/ |
 
-### Helm
-- [Helm 官网](https://helm.sh/)
-- [Artifact Hub](https://artifacthub.io/) - Helm Chart 仓库
+### 推荐书籍
 
-## 📖 推荐书籍
+**入门**：《Kubernetes in Action》(Manning) · 《Kubernetes 权威指南》(龚正等) · 《Kubernetes 即学即用》(O'Reilly)
 
-### 入门
-- 《Kubernetes in Action》 - Manning
-- 《Kubernetes权威指南》 - 龚正等著
-- 《Kubernetes即学即用》 - O'Reilly
+**进阶**：《Programming Kubernetes》(O'Reilly) · 《Kubernetes Patterns》 · 《Production Kubernetes》(O'Reilly)
 
-### 进阶
-- 《Programming Kubernetes》 - O'Reilly
-- 《Kubernetes Patterns》 - 设计模式
-- 《Production Kubernetes》 - O'Reilly
+### 视频课程
 
-## 🎬 视频课程
-
-### 免费
-- [KodeKloud - Kubernetes for Beginners](https://www.youtube.com/playlist?list=PL2We04F3Y_41jYdadX55fdJplDvgNGENo)
-- [TechWorld with Nana](https://www.youtube.com/c/TechWorldwithNana) - K8s系列
-- [CNCF YouTube](https://www.youtube.com/c/cloudnativefdn) - KubeCon演讲
-
-### 付费
-- [Udemy - CKA/CKAD by Mumshad](https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests/)
-- [A Cloud Guru](https://acloudguru.com/)
-- [Linux Foundation Training](https://training.linuxfoundation.org/)
-
-## 🔧 实战项目
+- [KodeKloud - Kubernetes for Beginners](https://www.youtube.com/playlist?list=PL2We04F3Y_41jYdadX55fdJplDvgNGENo)（免费）
+- [TechWorld with Nana](https://www.youtube.com/c/TechWorldwithNana)（免费）
+- [Udemy - CKA/CKAD by Mumshad](https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests/)（付费）
+- [Linux Foundation Training](https://training.linuxfoundation.org/)（付费）
 
 ### 练习环境
-- [Killercoda](https://killercoda.com/kubernetes) - 在线实验环境
-- [Play with Kubernetes](https://labs.play-with-k8s.com/) - 免费4小时环境
-- [Katacoda (已停)](https://www.katacoda.com/) - 被O'Reilly收购
 
-### 练手项目
-1. 部署一个多层应用 (Frontend + Backend + DB)
-2. 配置 Ingress 和 TLS
-3. 实现 HPA 自动扩缩
-4. 配置 RBAC 权限控制
-5. 部署 Prometheus + Grafana 监控
+- [Killercoda](https://killercoda.com/kubernetes) — 在线实验环境
+- [Play with Kubernetes](https://labs.play-with-k8s.com/) — 免费 4 小时环境
+
+---
 
 ## 🌐 CNCF 生态
 
 ### 核心项目
+
 | 项目 | 类型 | 链接 |
 |------|------|------|
-| **etcd** | 分布式KV存储 | https://etcd.io/ |
-| **CoreDNS** | DNS服务 | https://coredns.io/ |
-| **containerd** | 容器运行时 | https://containerd.io/ |
-| **Prometheus** | 监控 | https://prometheus.io/ |
-| **Envoy** | 服务代理 | https://www.envoyproxy.io/ |
+| etcd | 分布式 KV 存储 | https://etcd.io/ |
+| CoreDNS | DNS 服务 | https://coredns.io/ |
+| containerd | 容器运行时 | https://containerd.io/ |
+| Prometheus | 监控 | https://prometheus.io/ |
+| Envoy | 服务代理 | https://www.envoyproxy.io/ |
 
 ### Service Mesh
-- **Istio** - https://istio.io/
-- **Linkerd** - https://linkerd.io/
-- **Cilium** - https://cilium.io/
+
+Istio (https://istio.io/) · Linkerd (https://linkerd.io/) · Cilium (https://cilium.io/)
 
 ### GitOps
-- **ArgoCD** - https://argo-cd.readthedocs.io/
-- **Flux** - https://fluxcd.io/
 
-## 📝 Kubernetes 1.29+ 新特性
+ArgoCD (https://argo-cd.readthedocs.io/) · Flux (https://fluxcd.io/)
 
-### 1.29 (2023.12)
-- Sidecar Containers (Beta)
-- ReadWriteOncePod PV 稳定
-- KMS v2 稳定
+---
 
-### 1.30 (2024.04)
-- Pod Scheduling Readiness 稳定
-- Min Domains in PodTopologySpread
+## 💡 学习路径
 
-### 1.31+ (2024-2025)
-- Sidecar Containers GA
-- 更多 Gateway API 特性
-- 增强的 Pod 安全标准
+### 入门（1-2 周）
 
-## 💡 学习路径建议
-
-### 入门 (1-2周)
-1. 理解容器和Docker基础
-2. 学习K8s核心概念 (Pod, Deployment, Service)
-3. 用minikube搭建本地环境
+1. 理解容器和 Docker 基础
+2. 学习核心概念（Pod、Deployment、Service）
+3. 用 minikube 搭建本地环境
 4. 完成官方交互式教程
 
-### 进阶 (1-2月)
-1. 深入 StatefulSet, DaemonSet, Job
-2. 存储: PV/PVC, StorageClass
-3. 网络: Ingress, NetworkPolicy
-4. 安全: RBAC, Pod Security
-5. 监控: Prometheus + Grafana
+### 进阶（1-2 月）
 
-### 高级 (持续)
-1. Operator 开发
-2. CRD 和 Controller
-3. 集群运维和故障排查
-4. 多集群管理
-5. 云原生架构设计
+1. StatefulSet、DaemonSet、Job/CronJob
+2. 存储：PV/PVC、StorageClass
+3. 网络：Ingress、NetworkPolicy
+4. 安全：RBAC、Pod Security
+5. 监控：Prometheus + Grafana
 
-## 🔗 社区资源
+### 高级（持续）
 
-- [Kubernetes Slack](https://slack.k8s.io/) - 官方Slack
+1. Operator 开发、CRD 和 Controller
+2. 集群运维和故障排查
+3. 多集群管理
+4. 云原生架构设计
+
+---
+
+## 🔗 社区
+
+- [Kubernetes Slack](https://slack.k8s.io/)
 - [CNCF Slack](https://slack.cncf.io/)
-- [r/kubernetes](https://www.reddit.com/r/kubernetes/) - Reddit
+- [r/kubernetes](https://www.reddit.com/r/kubernetes/)
 - [Kubernetes 中文社区](https://www.kubernetes.org.cn/)
 
 ---
 
-## 📁 本仓库内容
+## 🔗 关联仓库
 
-```
-├── README.md              # 本文件
-├── docs/                  # 详细配置指南 ⭐
-│   ├── 01-cluster-setup.md    # 集群搭建
-│   ├── 02-workloads.md        # 工作负载配置
-│   ├── 03-networking.md       # 网络配置
-│   ├── 04-storage.md          # 存储配置
-│   ├── 05-security.md         # 安全配置
-│   ├── 06-monitoring.md       # 监控告警
-│   └── 07-troubleshooting.md  # 故障排查
-├── manifests/             # 示例YAML文件
-│   ├── basic/            # 基础资源示例
-│   ├── advanced/         # 高级配置示例
-│   └── production/       # 生产环境参考
-├── scripts/              # 实用脚本
-├── notes/                # 学习笔记
-└── labs/                 # 实验练习
-```
-
-## 📖 详细配置指南
-
-| 文档 | 内容 |
+| 仓库 | 内容 |
 |------|------|
-| [01-集群搭建](docs/01-cluster-setup.md) | minikube/kind/k3s 本地环境、kubeadm 生产集群、云托管集群 |
-| [02-工作负载](docs/02-workloads.md) | Pod 完整配置、Deployment 滚动更新、StatefulSet、DaemonSet、Job/CronJob |
-| [03-网络配置](docs/03-networking.md) | Service 四种类型、Ingress 详解、NetworkPolicy、DNS 配置 |
-| [04-存储配置](docs/04-storage.md) | Volume 类型、PV/PVC、StorageClass 动态供给、卷扩容和快照 |
-| [05-安全配置](docs/05-security.md) | RBAC 完整示例、Pod 安全标准、Secret 管理、最佳实践清单 |
-| [06-监控告警](docs/06-monitoring.md) | Metrics Server、Prometheus Stack、日志收集、告警配置 |
-| [07-故障排查](docs/07-troubleshooting.md) | Pod/网络/存储问题排查、调试命令、常见问题速查表 |
+| [nvidia](https://github.com/mengxidong-manager/nvidia) | NVIDIA GPU 技术文档（Vera Rubin / B300 / nvidia-smi / AIDC 运维 / RAID / VPN） |
 
 ---
 
-*持续更新中，欢迎贡献！*
+*持续更新中*
