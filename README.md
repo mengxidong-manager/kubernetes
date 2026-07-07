@@ -2,7 +2,7 @@
 
 > Kubernetes 学习资源、运维文档、示例 YAML、实用脚本
 >
-> 维护人：孟希東 · 最后更新: 2026-06-30
+> 维护人：孟希東 · 最后更新: 2026-07-07
 
 ---
 
@@ -10,24 +10,36 @@
 
 | 文档 | 内容 |
 |------|------|
-| [K8s 1.34 生产环境 HA 集群部署指南](docs/K8s_1.34_生产环境HA集群部署指南.md) | **3Master + 3etcd + 2LB** · 外部 etcd TLS · HAProxy+Keepalived · 11 节点完整部署 |
+| [K8s 1.34 生产环境 HA 集群部署指南](docs/K8s_1.34_生产环境HA集群部署指南.md) | **3Master + 3etcd + 2LB** · 外部 etcd TLS · HAProxy+Keepalived · 11 节点 |
 | [K8s 1.34 集群部署指南（测试环境）](docs/K8s_1.34_集群部署指南.md) | 单 Master · kubeadm + containerd + Calico + Helm · GPU 就绪 |
-| [Prometheus + Grafana 监控部署指南](docs/Prometheus_Grafana_监控部署指南.md) | kube-prometheus-stack · 外部 etcd/HAProxy 监控 · GPU DCGM · 告警规则 · 9 层全栈覆盖 |
-| [K8s GPU 调度与部署指南](docs/K8s_GPU调度与部署指南.md) | GPU Operator · 调度规则 · Time-Slicing · MIG · DRA · DCGM 监控 |
+| [K8s GPU 训练与推理全栈架构指南](docs/K8s_GPU训练与推理全栈架构指南.md) | **物理部署 · GPU 调用链 · 训练/推理工作流 · AI 平台栈 · 存储/网络/多租户** |
+| [K8s GPU 调度与部署指南](docs/K8s_GPU调度与部署指南.md) | GPU Operator · 调度规则 · Time-Slicing · MIG · DRA |
+| [Prometheus + Grafana 监控部署指南](docs/Prometheus_Grafana_监控部署指南.md) | kube-prometheus-stack · 外部 etcd/HAProxy · GPU DCGM · 告警 · 9 层全栈 |
 | [Linux & K8s 运维命令速查手册](docs/Linux_K8s_运维命令速查手册.md) | Linux 系统管理 + K8s 集群运维 100+ 命令 · 双份速查表 |
+
+## 文档体系
+
+```
+Phase 1  集群部署          → K8s_1.34_生产环境HA集群部署指南
+Phase 2  GPU 资源管理       → K8s_GPU调度与部署指南
+Phase 3  监控体系           → Prometheus_Grafana_监控部署指南
+Phase 4  训练与推理全栈      → K8s_GPU训练与推理全栈架构指南（NEW）
+日常运维                    → Linux_K8s_运维命令速查手册
+```
 
 ## 仓库结构
 
 ```
 ├── docs/
-│   ├── K8s_1.34_生产环境HA集群部署指南.md    # 生产 HA 集群（11 节点）
-│   ├── K8s_1.34_集群部署指南.md              # 测试集群（单 Master）
-│   ├── Prometheus_Grafana_监控部署指南.md     # 全栈监控
-│   ├── K8s_GPU调度与部署指南.md              # GPU 调度
-│   └── Linux_K8s_运维命令速查手册.md          # 命令速查
-├── manifests/basic/                          # Deployment / Service / ConfigMap
-├── manifests/advanced/                       # HPA / Ingress
-└── scripts/useful-commands.sh                # 运维脚本
+│   ├── K8s_1.34_生产环境HA集群部署指南.md
+│   ├── K8s_1.34_集群部署指南.md
+│   ├── K8s_GPU训练与推理全栈架构指南.md       ← NEW
+│   ├── K8s_GPU调度与部署指南.md
+│   ├── Prometheus_Grafana_监控部署指南.md
+│   └── Linux_K8s_运维命令速查手册.md
+├── manifests/basic/
+├── manifests/advanced/
+└── scripts/useful-commands.sh
 ```
 
 ## 学习资源
@@ -40,4 +52,4 @@
 
 CNCF：etcd · CoreDNS · Prometheus · Istio · ArgoCD · Cilium
 
-关联仓库：[nvidia](https://github.com/mengxidong-manager/nvidia)
+关联仓库：[nvidia](https://github.com/mengxidong-manager/nvidia) · [network](https://github.com/mengxidong-manager/network)
