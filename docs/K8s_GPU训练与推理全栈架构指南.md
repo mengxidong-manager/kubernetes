@@ -1,6 +1,6 @@
 # K8s GPU 训练与推理全栈架构指南
 
-> 从物理部署到 AI 平台：集群在哪里、GPU 如何被调用、训练和推理工作流、训练与推理的部署差异、AI 平台组件栈、存储与网络设计、多租户管理
+> 从物理部署到 AI 平台：集群在哪里、GPU 如何被调用、训练和推理工作流、训练与推理的部署差异、AI 平台组件栈、存储架构（含训练/推理存储需求差异）、网络设计、多租户管理
 >
 > 撰写人：孟希東
 
@@ -596,7 +596,9 @@ helm install jupyterhub jupyterhub/jupyterhub -n jupyter --create-namespace -f j
 
 ## 7. 存储架构
 
-### 存储分层
+GPU 算力增长远超存储 I/O 增长速度，如果存储跟不上，昂贵的 GPU 会大量时间在等数据而不是在计算。团队投入巨资建设 GPU 基础设施，却发现算力有一半时间在闲置——数据层已经成为限制训练速度的头号瓶颈，这是生产环境存储设计要解决的核心矛盾。
+
+### 7.1 存储分层
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -605,58 +607,115 @@ helm install jupyterhub jupyterhub/jupyterhub -n jupyter --create-namespace -f j
 │  ← 最快，最贵，容量有限（80-288GB/卡）             │
 ├──────────────────────────────────────────────┤
 │  本地 NVMe SSD                                │
-│  模型缓存、数据集预取                             │
+│  模型缓存、数据集预取、训练中间结果缓存              │
 │  ← 快，延迟低，节点级                             │
 ├──────────────────────────────────────────────┤
-│  分布式存储（Ceph / Lustre / VAST）              │
+│  全闪并行文件系统（WEKA / VAST / Ceph / Lustre）  │
 │  训练数据集、Checkpoint、模型文件                   │
-│  ← 大容量，所有节点共享访问                        │
+│  ← 大容量，所有节点共享访问，高聚合吞吐              │
 ├──────────────────────────────────────────────┤
 │  对象存储（S3 / MinIO / SeaweedFS）              │
-│  模型归档、日志、管道产物                           │
+│  历史数据湖归档、日志、管道产物                     │
 │  ← 最便宜，无限扩展                              │
 └──────────────────────────────────────────────┘
 ```
 
-### K8s 存储配置
+生产中常见的技术选型：
+
+| 方案 | 特点 | 适用场景 |
+|------|------|----------|
+| **WEKA** | NVMe-oF，POSIX+S3+NFS 统一命名空间，写入可达 20GB/s·节点 | 大规模分布式训练，预算充足 |
+| **VAST Data** | 全闪存，去重压缩，单一全局命名空间 | 超大数据集训练 |
+| **Lustre / GPFS** | 传统 HPC 并行文件系统 | 学术/科研集群 |
+| **Ceph** | 开源，成本低，灵活 | 中小规模、预算有限场景 |
+
+GPUDirect Storage 技术支持数据直接 DMA 到 GPU 显存（40+ GB/s），绕过 CPU 内存中转，是大规模训练集群的标配加速手段。
+
+### 7.2 训练与推理的存储需求差异
+
+训练和推理的 I/O 模式几乎是相反的：训练要"持续喂饱" GPU，推理只在启动那一刻依赖存储，之后完全在显存里运转。
+
+| 维度 | 训练 | 推理 |
+|------|------|------|
+| 读取模式 | 海量数据集持续读取，多个 epoch 反复扫描 | 模型权重一次性加载，之后几乎不读存储 |
+| 写入模式 | 高频 Checkpoint 写入（GB~TB 级，周期性） | 几乎无写入（仅日志） |
+| 访问并发 | 数百 GPU 节点同时并发读同一数据集 | 各推理实例独立加载各自副本，互不通信 |
+| 数据量级 | TB~PB 级（原始数据集） | GB~百 GB 级（单个模型权重） |
+| I/O 模式 | 随机读（shuffle）+ 顺序写（checkpoint） | 顺序读（一次性加载）为主 |
+| 延迟敏感度 | 对吞吐敏感，对单次延迟不敏感 | 冷启动加载延迟直接影响服务可用性 |
+| 一致性要求 | 强（Checkpoint 必须完整可靠，否则训练无法恢复） | 弱（模型文件只读，不存在并发写冲突） |
+| 真正的"热数据" | Checkpoint 落盘 | KV Cache 在显存，不落盘 |
+| 存储选型倾向 | 全闪并行文件系统，追求极限吞吐 | 普通并行文件系统或 NFS 即可 |
+| 特有需求 | 元数据性能（海量小文件数据集） | 多版本管理、灰度发布路径切换 |
+
+**训练侧的关键存储需求：**
+
+- **数据集读取**：分布式训练涉及大量 GPU/CPU 同时访问数据，存储必须支持多路数据流并发，聚合带宽随 GPU 数量线性扩展，否则会出现 GPU 空转
+- **Checkpoint 写入**：周期性保存模型状态，写入吞吐低或延迟高会导致 Checkpoint 耗时过长，直接拖慢训练进程；Checkpoint 损坏意味着前面几小时甚至几天的训练白费，对可靠性要求极高
+- **中间结果缓存**：前向/反向传播的中间激活值对内存带宽和低延迟要求很高，这部分优先用本地 NVMe 缓存，不必都打到远程共享存储
+
+**推理侧的关键存储需求：**
+
+- **模型加载**：只在服务启动或扩容新实例时读取一次，之后完全驻留 GPU 显存；关键指标是冷启动延迟，而非持续吞吐
+- **KV Cache 不落盘**：真正高频读写的 KV Cache 完全在 GPU 显存（及部分卸载到 CPU 内存）中管理，不经过持久化存储层——这是训练推理存储需求最大的分野
+- **模型版本管理**：推理关心的是模型版本可追溯和灰度切换，模型仓库需支持多版本共存，KServe 金丝雀发布时要同时挂载新旧版本路径
+
+### 7.3 K8s 存储配置
 
 ```yaml
-# 1. 训练数据集 PVC（ReadOnlyMany，多 Pod 同时读取）
+# 1. 训练数据集 PVC（多节点同时只读，走并行文件系统）
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: training-dataset
 spec:
-  accessModes: [ReadOnlyMany]
-  storageClassName: ceph-fs
+  accessModes: [ReadOnlyMany]      # 多 Pod 同时读
+  storageClassName: weka-fast       # 或 cephfs / vast-nfs
   resources:
     requests:
-      storage: 10Ti
+      storage: 50Ti
 
-# 2. Checkpoint PVC（ReadWriteMany，训练 Pod 写入）
+---
+# 2. Checkpoint PVC（分布式训练多节点各自写，需要高吞吐）
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: checkpoint-storage
 spec:
   accessModes: [ReadWriteMany]
-  storageClassName: ceph-fs
+  storageClassName: weka-fast
   resources:
     requests:
-      storage: 2Ti
+      storage: 5Ti
 
-# 3. 模型仓库 PVC（推理 Pod 挂载）
+---
+# 3. 模型仓库 PVC（推理 Pod 只读挂载，性能要求远低于训练）
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: model-storage
 spec:
   accessModes: [ReadOnlyMany]
-  storageClassName: ceph-fs
+  storageClassName: weka-fast        # 也可用普通 NFS
   resources:
     requests:
-      storage: 5Ti
+      storage: 2Ti
 ```
+
+```yaml
+# 推理 Pod 按版本路径引用模型，支持灰度切换
+volumeMounts:
+- name: models
+  mountPath: /models/v2.1
+  subPath: Qwen2.5-72B-Instruct/v2.1
+```
+
+### 7.4 生产落地建议
+
+- **本地 NVMe 缓存 + 共享并行存储组合**：本地 NVMe 用于活跃训练数据缓存，共享存储承载数据集和 Checkpoint，确保存储网络带宽随 GPU 数量同比例扩展
+- **存储网络必须匹配 GPU 规模**：网络带宽跟不上会导致存储网络饱和，成为新瓶颈，需用 100GbE 或 InfiniBand 承载存储流量
+- **训练/推理存储分离**：训练节点池配全闪并行文件系统（WEKA/VAST），推理节点池用普通共享存储即可，没必要为推理场景采购顶级存储性能
+- **分层生命周期管理**：热数据（当前训练集+Checkpoint）放全闪层，温数据（近期数据集）放较慢闪存/HDD，冷数据（历史归档）放对象存储，按策略自动迁移
 
 ---
 
